@@ -512,13 +512,17 @@ const TUTORIAL_CONTENT = [
   { text: "MISSION ACCOMPLISHED! See that? You're on the board! The Leaderboard shows the top agents. Keep banning to climb the ranks.", target: "leaderboardRef", placement: "top" },
   { text: "One last thing. If you need me, I'm always on comms. Right here in the bottom right. Ask me anything, or tell me to 'start banning'. I'm good like that.", target: "assistantRef", placement: "top-right" }
 ];
-const TROLL_TEXT = "Whoa, whoa, whoa there, speedy. This part is important, you really need to listen! Now, where was I...";
+const TROLL_TEXTS = [
+  "Whoa, whoa, whoa there, speedy. This part is important, you really need to listen! Now, where was I...",
+  "Woah. Seriously\u2014this bit is crucial. If you skip it, you'll miss the one trick that separates agents from amateurs. Deep breath. Focus. Now, where was I...",
+  "WOAH. Agent, stand down on that Next button. This briefing keeps the agency from imploding, kittens from crying, and your Banjas from evaporating. Three more seconds of patience. Now... where was I..."
+];
 function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, stopSound, playing, creator }) {
   const [highlightStyle, setHighlightStyle] = useState({ opacity: 0 });
   const [popoverStyle, setPopoverStyle] = useState({ opacity: 0 });
   const popoverRef = useRef(null);
   const content = TUTORIAL_CONTENT[step];
-  const [trolledSteps, setTrolledSteps] = useState(/* @__PURE__ */ new Set());
+  const trollCountsRef = useRef({});
   const [isTrolling, setIsTrolling] = useState(false);
   useEffect(() => {
     if (!content) {
@@ -586,12 +590,15 @@ function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, sto
   const isWaitingStep = step === 4;
   const handleNext = async () => {
     if (isTrolling) return;
-    if (playing && !trolledSteps.has(step)) {
-      setTrolledSteps((prev) => new Set(prev.add(step)));
+    if (playing) {
+      const prev = trollCountsRef.current[step] || 0;
+      const count = prev + 1;
+      trollCountsRef.current[step] = count;
       setIsTrolling(true);
       pauseSound();
       try {
-        const res = await generateOrGetTTS(TROLL_TEXT, TTS_VOICE, creator);
+        const text = TROLL_TEXTS[Math.min(count - 1, TROLL_TEXTS.length - 1)];
+        const res = await generateOrGetTTS(text, TTS_VOICE, creator);
         const trollAudio = new Audio(res.url);
         await new Promise((resolve) => {
           trollAudio.onended = resolve;
@@ -614,55 +621,55 @@ function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, sto
   return /* @__PURE__ */ jsxDEV(Fragment, { children: [
     /* @__PURE__ */ jsxDEV("div", { className: "tutorial-highlight", style: highlightStyle }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 494,
+      lineNumber: 500,
       columnNumber: 11
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "tutorial-popover", ref: popoverRef, style: popoverStyle, children: [
       /* @__PURE__ */ jsxDEV("p", { children: content.text }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 496,
+        lineNumber: 502,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV("div", { className: "tutorial-nav", children: [
         /* @__PURE__ */ jsxDEV("div", { className: "tutorial-dots", children: TUTORIAL_CONTENT.slice(1).map((_, i) => /* @__PURE__ */ jsxDEV("span", { className: i + 1 === step ? "active" : "" }, i, false, {
           fileName: "<stdin>",
-          lineNumber: 499,
+          lineNumber: 505,
           columnNumber: 62
         }, this)) }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 498,
+          lineNumber: 504,
           columnNumber: 17
         }, this),
         !isWaitingStep && /* @__PURE__ */ jsxDEV("button", { className: "btn primary", onClick: handleNext, disabled: isTrolling, children: isLastStep ? "Finish" : "Next" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 502,
+          lineNumber: 508,
           columnNumber: 21
         }, this),
         isWaitingStep && /* @__PURE__ */ jsxDEV("button", { className: "btn", disabled: true, children: "Waiting..." }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 504,
+          lineNumber: 510,
           columnNumber: 35
         }, this)
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 497,
+        lineNumber: 503,
         columnNumber: 13
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 495,
+      lineNumber: 501,
       columnNumber: 11
     }, this)
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 493,
+    lineNumber: 499,
     columnNumber: 9
   }, this);
 }
 function Toast({ msg, show }) {
   return /* @__PURE__ */ jsxDEV("div", { className: `toast ${show ? "show" : ""}`, children: msg }, void 0, false, {
     fileName: "<stdin>",
-    lineNumber: 512,
+    lineNumber: 518,
     columnNumber: 10
   }, this);
 }
@@ -676,7 +683,7 @@ function Leaderboard() {
   return /* @__PURE__ */ jsxDEV("div", { children: rows.map((row) => /* @__PURE__ */ jsxDEV("div", { className: "row", children: [
     /* @__PURE__ */ jsxDEV("img", { className: "avatar", src: `https://images.websim.com/avatar/${row.username}`, alt: "avatar" }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 526,
+      lineNumber: 532,
       columnNumber: 11
     }, this),
     /* @__PURE__ */ jsxDEV("strong", { children: [
@@ -684,7 +691,7 @@ function Leaderboard() {
       row.username
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 527,
+      lineNumber: 533,
       columnNumber: 11
     }, this),
     /* @__PURE__ */ jsxDEV("span", { className: "score", children: [
@@ -692,16 +699,16 @@ function Leaderboard() {
       " Banjas"
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 528,
+      lineNumber: 534,
       columnNumber: 11
     }, this)
   ] }, row.id, true, {
     fileName: "<stdin>",
-    lineNumber: 525,
+    lineNumber: 531,
     columnNumber: 9
   }, this)) }, void 0, false, {
     fileName: "<stdin>",
-    lineNumber: 523,
+    lineNumber: 529,
     columnNumber: 5
   }, this);
 }
@@ -744,23 +751,23 @@ function Assistant() {
   return /* @__PURE__ */ jsxDEV("div", { className: "assistant", children: [
     /* @__PURE__ */ jsxDEV("header", { children: "Agent Ban" }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 577,
+      lineNumber: 583,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "chatlog", children: [
       log.map((m, i) => /* @__PURE__ */ jsxDEV("div", { className: `msg ${m.role === "user" ? "user" : "ai"}`, children: m.content }, i, false, {
         fileName: "<stdin>",
-        lineNumber: 580,
+        lineNumber: 586,
         columnNumber: 11
       }, this)),
       log.length === 0 && /* @__PURE__ */ jsxDEV("div", { className: "msg ai", children: `Say "Start banning" and I'll guide you.` }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 583,
+        lineNumber: 589,
         columnNumber: 11
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 578,
+      lineNumber: 584,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "inputrow", children: [
@@ -776,30 +783,30 @@ function Assistant() {
         false,
         {
           fileName: "<stdin>",
-          lineNumber: 587,
+          lineNumber: 593,
           columnNumber: 9
         },
         this
       ),
       /* @__PURE__ */ jsxDEV("button", { className: "btn", onClick: send, disabled: busy, children: busy ? "\u2026" : "Send" }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 593,
+        lineNumber: 599,
         columnNumber: 9
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 586,
+      lineNumber: 592,
       columnNumber: 7
     }, this)
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 576,
+    lineNumber: 582,
     columnNumber: 5
   }, this);
 }
 const root = createRoot(document.getElementById("root"));
 root.render(/* @__PURE__ */ jsxDEV(App, {}, void 0, false, {
   fileName: "<stdin>",
-  lineNumber: 600,
+  lineNumber: 606,
   columnNumber: 13
 }));
