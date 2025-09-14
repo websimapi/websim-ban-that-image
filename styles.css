@@ -95,24 +95,10 @@ body { margin: 0; background: var(--bg); color: var(--fg); font-family: "Noto Sa
 .tutorial-dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
 .tutorial-dots span.active { background: var(--accent); }
 
-.agent-badge-container {
-  width: 50px;
-  height: 50px;
-  position: relative; /* To contain the badge when not fixed */
-}
-
 .agent-badge-header {
   width: 50px;
   height: 50px;
-  will-change: transform; /* Performance hint for animation */
 }
-
-.agent-badge-header.moving {
-  position: fixed;
-  z-index: 1001; /* Above popover, below toast */
-  transition: top 0.3s ease-in-out, left 0.3s ease-in-out;
-}
-
 .agent-badge-header.bouncing {
   animation: bounce 0.8s infinite;
 }
