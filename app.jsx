@@ -249,12 +249,12 @@ function App() {
           columnNumber: 15
         }, this),
         /* @__PURE__ */ jsxDEV("div", { className: "col", children: [
-          /* @__PURE__ */ jsxDEV("div", { className: "bubble", children: "Agent Ban reporting in. Ban Ban Ban! Earn Banjas by banning images that aren\u2019t yours. Try the tutorial image below for +1 Banja." }, void 0, false, {
+          /* @__PURE__ */ jsxDEV("div", { className: "bubble", children: "Agent Ban reporting in. Ban Ban Ban! Earn Banjas by banning images that aren't yours. Try the tutorial image below for +1 Banja." }, void 0, false, {
             fileName: "<stdin>",
             lineNumber: 184,
             columnNumber: 17
           }, this),
-          /* @__PURE__ */ jsxDEV("div", { className: "tiny", children: "Pro tip: Keep this tab open. I\u2019ll handle bans when you say the word." }, void 0, false, {
+          /* @__PURE__ */ jsxDEV("div", { className: "tiny", children: "Pro tip: Keep this tab open. I'll handle bans when you say the word." }, void 0, false, {
             fileName: "<stdin>",
             lineNumber: 187,
             columnNumber: 17
@@ -475,7 +475,7 @@ function Leaderboard() {
   const { data: rows = [] } = useQuery(
     room.query(`select u.id, u.username, bs.score
       from public.${BANSTATE} bs
-      join public.user u on (u.id = bs.id)
+      join public.user u on (u.id = (bs.id)::uuid)
       order by bs.score desc nulls last`)
   );
   return /* @__PURE__ */ jsxDEV("div", { children: rows.map((row) => /* @__PURE__ */ jsxDEV("div", { className: "row", children: [
@@ -556,7 +556,7 @@ function Assistant({ voice }) {
         lineNumber: 319,
         columnNumber: 11
       }, this)),
-      log.length === 0 && /* @__PURE__ */ jsxDEV("div", { className: "msg ai", children: "Say \u201CStart banning\u201D and I\u2019ll guide you." }, void 0, false, {
+      log.length === 0 && /* @__PURE__ */ jsxDEV("div", { className: "msg ai", children: `Say "Start banning" and I'll guide you.` }, void 0, false, {
         fileName: "<stdin>",
         lineNumber: 322,
         columnNumber: 11
