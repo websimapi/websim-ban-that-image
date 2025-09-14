@@ -95,10 +95,11 @@ function App() {
   const banState = states?.[0];
   const toast = useToast();
   const [tutorialStep, setTutorialStep] = useState(1);
-  const audioRef = useRef(null);
-  const [playing, setPlaying] = useState(false);
-  const [paused, setPaused] = useState(false);
-  const [savedPosition, setSavedPosition] = useState(0);
+  const audioRef2 = useRef(null);
+  const [playing, setPlaying2] = useState(false);
+  const [paused, setPaused2] = useState(false);
+  const lastAudioUrlRef = useRef(null);
+  const lastPositionRef = useRef(0);
   const galleryRef = useRef(null);
   const uploadRef = useRef(null);
   const tutorialCardRef = useRef(null);
@@ -165,55 +166,87 @@ function App() {
     }
   }
   async function playSound(text, onEndCallback) {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.onended = null;
-      audioRef.current = null;
+    if (audioRef2.current) {
+      audioRef2.current.pause();
+      audioRef2.current.onended = null;
+      audioRef2.current.ontimeupdate = null;
+      audioRef2.current = null;
     }
-    setPlaying(true);
-    setPaused(false);
+    setPlaying2(true);
+    setPaused2(false);
     try {
       const res = await generateOrGetTTS(text, TTS_VOICE, creator);
+      lastAudioUrlRef.current = res.url;
+      lastPositionRef.current = 0;
       const audio = new Audio(res.url);
-      audioRef.current = audio;
+      audioRef2.current = audio;
+      audio.ontimeupdate = () => {
+        lastPositionRef.current = audio.currentTime || 0;
+      };
       audio.onended = () => {
-        setPlaying(false);
-        setPaused(false);
-        audioRef.current = null;
+        setPlaying2(false);
+        setPaused2(false);
+        audioRef2.current = null;
         if (onEndCallback) onEndCallback();
       };
       await audio.play();
     } catch (e) {
       console.error("TTS failed", e);
-      setPlaying(false);
+      setPlaying2(false);
     }
   }
   function stopSound() {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.onended = null;
-      audioRef.current = null;
+    if (audioRef2.current) {
+      audioRef2.current.pause();
+      audioRef2.current.onended = null;
+      audioRef2.current.ontimeupdate = null;
+      audioRef2.current = null;
     }
-    setPlaying(false);
-    setPaused(false);
+    setPlaying2(false);
+    setPaused2(false);
   }
   function pauseSound() {
-    if (audioRef.current && playing && !paused) {
-      setSavedPosition(audioRef.current.currentTime);
-      audioRef.current.pause();
-      setPaused(true);
+    if (audioRef2.current && playing && !paused) {
+      lastPositionRef.current = audioRef2.current.currentTime || 0;
+      audioRef2.current.pause();
+      setPaused2(true);
     }
   }
   function resumeSound() {
-    if (audioRef.current && playing && paused) {
-      audioRef.current.currentTime = savedPosition;
-      audioRef.current.play();
-      setPaused(false);
+    if (audioRef2.current && playing && paused) {
+      audioRef2.current.play();
+      setPaused2(false);
+      return;
     }
+    const url = lastAudioUrlRef.current;
+    const t = lastPositionRef.current || 0;
+    if (!url) return;
+    const audio = new Audio(url);
+    audioRef2.current = audio;
+    setPlaying2(true);
+    setPaused2(false);
+    audio.ontimeupdate = () => {
+      lastPositionRef.current = audio.currentTime || 0;
+    };
+    audio.onended = () => {
+      setPlaying2(false);
+      setPaused2(false);
+      audioRef2.current = null;
+    };
+    const startAt = Math.max(0, t - 0.05);
+    const startPlayback = () => {
+      try {
+        audio.currentTime = startAt;
+      } catch (_) {
+      }
+      audio.play();
+    };
+    if (audio.readyState >= 1) startPlayback();
+    else audio.addEventListener("loadedmetadata", startPlayback, { once: true });
   }
   if (!user) return /* @__PURE__ */ jsxDEV("div", { className: "app", children: "Loading user\u2026" }, void 0, false, {
     fileName: "<stdin>",
-    lineNumber: 247,
+    lineNumber: 274,
     columnNumber: 21
   }, this);
   return /* @__PURE__ */ jsxDEV("div", { className: "app", children: [
@@ -234,7 +267,7 @@ function App() {
       false,
       {
         fileName: "<stdin>",
-        lineNumber: 252,
+        lineNumber: 279,
         columnNumber: 9
       },
       this
@@ -243,124 +276,124 @@ function App() {
       /* @__PURE__ */ jsxDEV("div", { children: [
         /* @__PURE__ */ jsxDEV("div", { className: "h1", children: "Ban That Image!" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 266,
+          lineNumber: 293,
           columnNumber: 11
         }, this),
         /* @__PURE__ */ jsxDEV("div", { className: "hint", children: "(Hint: Your banned images are stored as a single JSON row in the leaderboard.)" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 267,
+          lineNumber: 294,
           columnNumber: 11
         }, this)
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 265,
+        lineNumber: 292,
         columnNumber: 9
       }, this),
       /* @__PURE__ */ jsxDEV("div", { className: "bar", children: /* @__PURE__ */ jsxDEV("button", { className: "btn", onClick: () => setTutorialStep(1), children: "Restart Tutorial" }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 270,
+        lineNumber: 297,
         columnNumber: 11
       }, this) }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 269,
+        lineNumber: 296,
         columnNumber: 9
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 264,
+      lineNumber: 291,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "section", children: /* @__PURE__ */ jsxDEV("div", { className: "toolbar", children: /* @__PURE__ */ jsxDEV("div", { className: "uploader", ref: uploadRef, children: [
       /* @__PURE__ */ jsxDEV("label", { className: "btn btn-upload", htmlFor: "fileUp", children: "Upload Image" }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 277,
+        lineNumber: 304,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV("input", { id: "fileUp", type: "file", accept: "image/*", onChange: (e) => handleUpload(e.target.files?.[0]) }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 278,
+        lineNumber: 305,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV("span", { className: "rule", children: "Do NOT press this. Uploading adds YOUR image to the Gallery." }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 279,
+        lineNumber: 306,
         columnNumber: 13
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 276,
+      lineNumber: 303,
       columnNumber: 11
     }, this) }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 275,
+      lineNumber: 302,
       columnNumber: 9
     }, this) }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 274,
+      lineNumber: 301,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "section", ref: galleryRef, children: [
       /* @__PURE__ */ jsxDEV("div", { style: { display: "flex", alignItems: "center", gap: 8 }, children: [
         /* @__PURE__ */ jsxDEV("h2", { style: { margin: 0 }, children: "Gallery" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 286,
+          lineNumber: 313,
           columnNumber: 11
         }, this),
         /* @__PURE__ */ jsxDEV("span", { className: "badge", children: "Public" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 287,
+          lineNumber: 314,
           columnNumber: 11
         }, this)
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 285,
+        lineNumber: 312,
         columnNumber: 9
       }, this),
       loadingImages ? /* @__PURE__ */ jsxDEV("div", { children: "Loading\u2026" }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 289,
+        lineNumber: 316,
         columnNumber: 26
       }, this) : /* @__PURE__ */ jsxDEV("div", { className: "grid", children: [
         /* @__PURE__ */ jsxDEV("div", { className: "card", ref: tutorialCardRef, children: [
           /* @__PURE__ */ jsxDEV("img", { src: tutorialImage.url, alt: "tutorial" }, void 0, false, {
             fileName: "<stdin>",
-            lineNumber: 292,
+            lineNumber: 319,
             columnNumber: 17
           }, this),
           /* @__PURE__ */ jsxDEV("div", { className: "meta", children: [
             /* @__PURE__ */ jsxDEV("div", { children: [
               /* @__PURE__ */ jsxDEV("div", { children: /* @__PURE__ */ jsxDEV("strong", { children: "Tutorial Image" }, void 0, false, {
                 fileName: "<stdin>",
-                lineNumber: 295,
+                lineNumber: 322,
                 columnNumber: 26
               }, this) }, void 0, false, {
                 fileName: "<stdin>",
-                lineNumber: 295,
+                lineNumber: 322,
                 columnNumber: 21
               }, this),
               /* @__PURE__ */ jsxDEV("small", { children: "Worth 1 Banja" }, void 0, false, {
                 fileName: "<stdin>",
-                lineNumber: 296,
+                lineNumber: 323,
                 columnNumber: 21
               }, this)
             ] }, void 0, true, {
               fileName: "<stdin>",
-              lineNumber: 294,
+              lineNumber: 321,
               columnNumber: 17
             }, this),
             /* @__PURE__ */ jsxDEV("button", { className: "btn primary", onClick: () => banImage({ id: "tutorial" }, true), children: "Ban" }, void 0, false, {
               fileName: "<stdin>",
-              lineNumber: 298,
+              lineNumber: 325,
               columnNumber: 17
             }, this)
           ] }, void 0, true, {
             fileName: "<stdin>",
-            lineNumber: 293,
+            lineNumber: 320,
             columnNumber: 17
           }, this)
         ] }, "tutorial-card", true, {
           fileName: "<stdin>",
-          lineNumber: 291,
+          lineNumber: 318,
           columnNumber: 13
         }, this),
         gallery.map((img) => {
@@ -368,7 +401,7 @@ function App() {
           return /* @__PURE__ */ jsxDEV("div", { className: "card", children: [
             /* @__PURE__ */ jsxDEV("img", { src: img.url, alt: "uploaded" }, void 0, false, {
               fileName: "<stdin>",
-              lineNumber: 305,
+              lineNumber: 332,
               columnNumber: 19
             }, this),
             /* @__PURE__ */ jsxDEV("div", { className: "meta", children: [
@@ -379,93 +412,93 @@ function App() {
                   img.bounty !== 1 ? "s" : ""
                 ] }, void 0, true, {
                   fileName: "<stdin>",
-                  lineNumber: 308,
+                  lineNumber: 335,
                   columnNumber: 23
                 }, this),
                 /* @__PURE__ */ jsxDEV("small", { children: mine ? "Your upload" : "Target" }, void 0, false, {
                   fileName: "<stdin>",
-                  lineNumber: 309,
+                  lineNumber: 336,
                   columnNumber: 23
                 }, this)
               ] }, void 0, true, {
                 fileName: "<stdin>",
-                lineNumber: 307,
+                lineNumber: 334,
                 columnNumber: 21
               }, this),
               /* @__PURE__ */ jsxDEV("div", { style: { display: "flex", gap: 8 }, children: /* @__PURE__ */ jsxDEV("button", { className: "btn primary", disabled: mine, onClick: () => banImage(img), children: "Ban" }, void 0, false, {
                 fileName: "<stdin>",
-                lineNumber: 312,
+                lineNumber: 339,
                 columnNumber: 23
               }, this) }, void 0, false, {
                 fileName: "<stdin>",
-                lineNumber: 311,
+                lineNumber: 338,
                 columnNumber: 21
               }, this)
             ] }, void 0, true, {
               fileName: "<stdin>",
-              lineNumber: 306,
+              lineNumber: 333,
               columnNumber: 19
             }, this)
           ] }, img.id, true, {
             fileName: "<stdin>",
-            lineNumber: 304,
+            lineNumber: 331,
             columnNumber: 17
           }, this);
         })
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 290,
+        lineNumber: 317,
         columnNumber: 11
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 284,
+      lineNumber: 311,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "section leaderboard", ref: leaderboardRef, children: [
       /* @__PURE__ */ jsxDEV("div", { style: { display: "flex", alignItems: "center", gap: 8 }, children: [
         /* @__PURE__ */ jsxDEV("h2", { style: { margin: 0 }, children: "Leaderboard" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 324,
+          lineNumber: 351,
           columnNumber: 11
         }, this),
         /* @__PURE__ */ jsxDEV("span", { className: "badge", children: "Realtime" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 325,
+          lineNumber: 352,
           columnNumber: 11
         }, this)
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 323,
+        lineNumber: 350,
         columnNumber: 9
       }, this),
       /* @__PURE__ */ jsxDEV(Leaderboard, {}, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 327,
+        lineNumber: 354,
         columnNumber: 9
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 322,
+      lineNumber: 349,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV(Toast, { msg: toast.msg, show: toast.show }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 330,
+      lineNumber: 357,
       columnNumber: 7
     }, this),
     (tutorialStep === 0 || tutorialStep > 5) && /* @__PURE__ */ jsxDEV("div", { ref: assistantRef, children: /* @__PURE__ */ jsxDEV(Assistant, {}, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 331,
+      lineNumber: 358,
       columnNumber: 76
     }, this) }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 331,
+      lineNumber: 358,
       columnNumber: 52
     }, this)
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 250,
+    lineNumber: 277,
     columnNumber: 5
   }, this);
 }
@@ -494,7 +527,14 @@ function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, sto
     }
     playSound(content.text);
     return () => {
-      stopSound();
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.onended = null;
+        audioRef.current.ontimeupdate = null;
+        audioRef.current = null;
+      }
+      setPlaying(false);
+      setPaused(false);
     };
   }, [step]);
   useEffect(() => {
@@ -581,55 +621,55 @@ function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, sto
   return /* @__PURE__ */ jsxDEV(Fragment, { children: [
     /* @__PURE__ */ jsxDEV("div", { className: "tutorial-highlight", style: highlightStyle }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 471,
+      lineNumber: 501,
       columnNumber: 11
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "tutorial-popover", ref: popoverRef, style: popoverStyle, children: [
       /* @__PURE__ */ jsxDEV("p", { children: content.text }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 473,
+        lineNumber: 503,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV("div", { className: "tutorial-nav", children: [
         /* @__PURE__ */ jsxDEV("div", { className: "tutorial-dots", children: TUTORIAL_CONTENT.slice(1).map((_, i) => /* @__PURE__ */ jsxDEV("span", { className: i + 1 === step ? "active" : "" }, i, false, {
           fileName: "<stdin>",
-          lineNumber: 476,
+          lineNumber: 506,
           columnNumber: 62
         }, this)) }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 475,
+          lineNumber: 505,
           columnNumber: 17
         }, this),
         !isWaitingStep && /* @__PURE__ */ jsxDEV("button", { className: "btn primary", onClick: handleNext, disabled: isTrolling, children: isLastStep ? "Finish" : "Next" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 479,
+          lineNumber: 509,
           columnNumber: 21
         }, this),
         isWaitingStep && /* @__PURE__ */ jsxDEV("button", { className: "btn", disabled: true, children: "Waiting..." }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 481,
+          lineNumber: 511,
           columnNumber: 35
         }, this)
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 474,
+        lineNumber: 504,
         columnNumber: 13
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 472,
+      lineNumber: 502,
       columnNumber: 11
     }, this)
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 470,
+    lineNumber: 500,
     columnNumber: 9
   }, this);
 }
 function Toast({ msg, show }) {
   return /* @__PURE__ */ jsxDEV("div", { className: `toast ${show ? "show" : ""}`, children: msg }, void 0, false, {
     fileName: "<stdin>",
-    lineNumber: 489,
+    lineNumber: 519,
     columnNumber: 10
   }, this);
 }
@@ -643,7 +683,7 @@ function Leaderboard() {
   return /* @__PURE__ */ jsxDEV("div", { children: rows.map((row) => /* @__PURE__ */ jsxDEV("div", { className: "row", children: [
     /* @__PURE__ */ jsxDEV("img", { className: "avatar", src: `https://images.websim.com/avatar/${row.username}`, alt: "avatar" }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 503,
+      lineNumber: 533,
       columnNumber: 11
     }, this),
     /* @__PURE__ */ jsxDEV("strong", { children: [
@@ -651,7 +691,7 @@ function Leaderboard() {
       row.username
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 504,
+      lineNumber: 534,
       columnNumber: 11
     }, this),
     /* @__PURE__ */ jsxDEV("span", { className: "score", children: [
@@ -659,16 +699,16 @@ function Leaderboard() {
       " Banjas"
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 505,
+      lineNumber: 535,
       columnNumber: 11
     }, this)
   ] }, row.id, true, {
     fileName: "<stdin>",
-    lineNumber: 502,
+    lineNumber: 532,
     columnNumber: 9
   }, this)) }, void 0, false, {
     fileName: "<stdin>",
-    lineNumber: 500,
+    lineNumber: 530,
     columnNumber: 5
   }, this);
 }
@@ -711,23 +751,23 @@ function Assistant() {
   return /* @__PURE__ */ jsxDEV("div", { className: "assistant", children: [
     /* @__PURE__ */ jsxDEV("header", { children: "Agent Ban" }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 554,
+      lineNumber: 584,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "chatlog", children: [
       log.map((m, i) => /* @__PURE__ */ jsxDEV("div", { className: `msg ${m.role === "user" ? "user" : "ai"}`, children: m.content }, i, false, {
         fileName: "<stdin>",
-        lineNumber: 557,
+        lineNumber: 587,
         columnNumber: 11
       }, this)),
       log.length === 0 && /* @__PURE__ */ jsxDEV("div", { className: "msg ai", children: `Say "Start banning" and I'll guide you.` }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 560,
+        lineNumber: 590,
         columnNumber: 11
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 555,
+      lineNumber: 585,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "inputrow", children: [
@@ -743,30 +783,30 @@ function Assistant() {
         false,
         {
           fileName: "<stdin>",
-          lineNumber: 564,
+          lineNumber: 594,
           columnNumber: 9
         },
         this
       ),
       /* @__PURE__ */ jsxDEV("button", { className: "btn", onClick: send, disabled: busy, children: busy ? "\u2026" : "Send" }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 570,
+        lineNumber: 600,
         columnNumber: 9
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 563,
+      lineNumber: 593,
       columnNumber: 7
     }, this)
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 553,
+    lineNumber: 583,
     columnNumber: 5
   }, this);
 }
 const root = createRoot(document.getElementById("root"));
 root.render(/* @__PURE__ */ jsxDEV(App, {}, void 0, false, {
   fileName: "<stdin>",
-  lineNumber: 577,
+  lineNumber: 607,
   columnNumber: 13
 }));
