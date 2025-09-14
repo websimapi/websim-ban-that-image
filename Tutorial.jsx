@@ -9,7 +9,8 @@ const TUTORIAL_CONTENT = [
   { text: "Now THIS... this is the big red button of temptation. Pressing it unleashes YOUR image into the gallery. We're trying to clear images, not add more! So... don't... press... it. (Unless you want to, I'm not your boss... but I am.)", target: "uploadRef", placement: "bottom" },
   { text: "Alright, your first mission. A gimme. This 'Tutorial Image' is a freebie. Ban it to earn your first Banja and prove you're not a rookie. Go on, click that beautiful 'Ban' button.", target: "tutorialCardRef", placement: "bottom" },
   { text: "MISSION ACCOMPLISHED! See that? You're on the board! The Leaderboard shows the top agents. Keep banning to climb the ranks.", target: "leaderboardRef", placement: "top" },
-  { text: "One last thing. If you need me, I'm always on comms. Right here in the bottom right. Ask me anything, or tell me to 'start banning'. I'm good like that.", target: "assistantRef", placement: "top-right" }
+  { text: "One last thing. If you need me, I'm always on comms. Right here in the bottom right. Ask me anything, or tell me to 'start banning'. I'm good like that.", target: "assistantRef", placement: "top-right" },
+  { text: "That's it, you're a fully-fledged agent now. Go make the agency proud. Dismissed!", target: null, placement: "center" }
 ];
 const TROLL_TEXTS = [
   "Whoa, whoa, whoa there, speedy. This part is important, you really need to listen! Now, where was I...",
@@ -24,11 +25,12 @@ function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, sto
   const trollCountsRef = useRef({});
   const [isTrolling, setIsTrolling] = useState(false);
   useEffect(() => {
-    if (!content) {
+    const stepContent = TUTORIAL_CONTENT[step];
+    if (!stepContent) {
       stopSound();
       return;
     }
-    playSound(content.text);
+    playSound(stepContent.text);
     return () => {
       stopSound();
     };
@@ -120,48 +122,48 @@ function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, sto
   return /* @__PURE__ */ jsxDEV(Fragment, { children: [
     /* @__PURE__ */ jsxDEV("div", { className: "tutorial-highlight", style: highlightStyle }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 139,
+      lineNumber: 141,
       columnNumber: 11
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "tutorial-popover", ref: popoverRef, style: popoverStyle, children: [
       /* @__PURE__ */ jsxDEV("p", { children: content.text }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 141,
+        lineNumber: 143,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV("div", { className: "tutorial-nav", children: [
         /* @__PURE__ */ jsxDEV("div", { className: "tutorial-dots", children: TUTORIAL_CONTENT.slice(1).map((_, i) => /* @__PURE__ */ jsxDEV("span", { className: i + 1 === step ? "active" : "" }, i, false, {
           fileName: "<stdin>",
-          lineNumber: 144,
+          lineNumber: 146,
           columnNumber: 62
         }, this)) }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 143,
+          lineNumber: 145,
           columnNumber: 17
         }, this),
         !isWaitingStep && /* @__PURE__ */ jsxDEV("button", { className: "btn primary", onClick: handleNext, disabled: isTrolling, children: isLastStep ? "Finish" : "Next" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 147,
+          lineNumber: 149,
           columnNumber: 21
         }, this),
         isWaitingStep && /* @__PURE__ */ jsxDEV("button", { className: "btn", disabled: true, children: "Waiting..." }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 149,
+          lineNumber: 151,
           columnNumber: 35
         }, this)
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 142,
+        lineNumber: 144,
         columnNumber: 13
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 140,
+      lineNumber: 142,
       columnNumber: 11
     }, this)
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 138,
+    lineNumber: 140,
     columnNumber: 9
   }, this);
 }
