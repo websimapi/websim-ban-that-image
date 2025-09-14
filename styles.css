@@ -10,6 +10,23 @@ body { margin: 0; background: var(--bg); color: var(--fg); font-family: "Noto Sa
 .btn { border:1px solid var(--fg); background:transparent; color:var(--fg); padding:10px 14px; border-radius:10px; cursor:pointer; transition: transform .06s ease, background .2s ease, color .2s ease; font-family: inherit; font-size: 14px; }
 .btn:active { transform: scale(0.98); }
 .btn.primary { background: var(--fg); color: var(--bg); }
+
+.btn.btn-upload {
+  background-color: #e53e3e; /* Red */
+  color: white;
+  border-color: #c53030;
+  font-weight: bold;
+  padding: 16px 24px; /* Bigger */
+  font-size: 18px; /* Bigger */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.btn.btn-upload:hover {
+  background-color: #c53030;
+  color: white;
+}
+
 .hint { font-size:12px; color: var(--muted); }
 .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:16px; margin-top:16px; }
 .card { border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#fafafa; display:flex; flex-direction:column; }

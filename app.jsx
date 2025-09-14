@@ -232,7 +232,7 @@ function App() {
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "section", children: /* @__PURE__ */ jsxDEV("div", { className: "toolbar", children: /* @__PURE__ */ jsxDEV("div", { className: "uploader", ref: uploadRef, children: [
-      /* @__PURE__ */ jsxDEV("label", { className: "btn", htmlFor: "fileUp", children: "Upload Image" }, void 0, false, {
+      /* @__PURE__ */ jsxDEV("label", { className: "btn btn-upload", htmlFor: "fileUp", children: "Upload Image" }, void 0, false, {
         fileName: "<stdin>",
         lineNumber: 233,
         columnNumber: 13
