@@ -16,7 +16,7 @@ const TROLL_TEXTS = [
   "Woah. Seriously\u2014this bit is crucial. If you skip it, you'll miss the one trick that separates agents from amateurs. Deep breath. Focus. Now, where was I...",
   "WOAH. Agent, stand down on that Next button. This briefing keeps the agency from imploding, kittens from crying, and your Banjas from evaporating. Three more seconds of patience. Now... where was I..."
 ];
-function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, stopSound, playing, creator, setBadgeStyle }) {
+function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, stopSound, playing, creator, onBadgePositionChange }) {
   const [highlightStyle, setHighlightStyle] = useState({ opacity: 0 });
   const [popoverStyle, setPopoverStyle] = useState({ opacity: 0 });
   const popoverRef = useRef(null);
@@ -26,87 +26,79 @@ function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, sto
   useEffect(() => {
     if (!content) {
       stopSound();
-      setBadgeStyle({ opacity: 0, pointerEvents: "none" });
       return;
     }
     playSound(content.text);
     return () => {
       stopSound();
     };
-  }, [step, setBadgeStyle]);
+  }, [step]);
   useEffect(() => {
     if (!content) {
       setHighlightStyle({ opacity: 0, pointerEvents: "none" });
       setPopoverStyle({ opacity: 0, pointerEvents: "none" });
-      setBadgeStyle({ opacity: 0, pointerEvents: "none" });
+      onBadgePositionChange(null);
       return;
     }
-    if (content.target && refs[content.target]?.current) {
-      const targetEl = refs[content.target].current;
-      const rect = targetEl.getBoundingClientRect();
-      setHighlightStyle({
-        width: `${rect.width + 12}px`,
-        height: `${rect.height + 12}px`,
-        top: `${rect.top - 6}px`,
-        left: `${rect.left - 6}px`
-      });
-      if (popoverRef.current) {
-        const popRect = popoverRef.current.getBoundingClientRect();
-        let popTop, popLeft;
-        switch (content.placement) {
-          case "bottom":
-            popTop = rect.bottom + 15;
-            popLeft = rect.left + rect.width / 2 - popRect.width / 2;
-            break;
-          case "top":
-            popTop = rect.top - popRect.height - 15;
-            popLeft = rect.left + rect.width / 2 - popRect.width / 2;
-            break;
-          case "top-right":
-            popTop = rect.top - popRect.height - 15;
-            popLeft = rect.right - popRect.width;
-            break;
-          default:
-            popTop = rect.bottom + 15;
-            popLeft = rect.left + rect.width / 2 - popRect.width / 2;
-        }
-        popTop = Math.max(8, Math.min(popTop, window.innerHeight - popRect.height - 8));
-        popLeft = Math.max(8, Math.min(popLeft, window.innerWidth - popRect.width - 8));
-        setPopoverStyle({ top: `${popTop}px`, left: `${popLeft}px`, opacity: 1 });
-        const badgeSize = 70;
-        let badgeTop = popTop + popRect.height / 2 - badgeSize / 2;
-        let badgeLeft;
-        if (popLeft > window.innerWidth / 2) {
-          badgeLeft = popLeft - badgeSize - 10;
-        } else {
-          badgeLeft = popLeft + popRect.width + 10;
-        }
-        badgeTop = Math.max(8, Math.min(badgeTop, window.innerHeight - badgeSize - 8));
-        badgeLeft = Math.max(8, Math.min(badgeLeft, window.innerWidth - badgeSize - 8));
-        setBadgeStyle({ top: `${badgeTop}px`, left: `${badgeLeft}px`, opacity: 1, width: `${badgeSize}px`, height: `${badgeSize}px` });
-      }
-    } else if (content.placement === "center") {
-      setHighlightStyle({ opacity: 0 });
-      if (popoverRef.current) {
-        const popRect = popoverRef.current.getBoundingClientRect();
-        const popTop = window.innerHeight / 2 - popRect.height / 2;
-        const popLeft = window.innerWidth / 2 - popRect.width / 2;
-        setPopoverStyle({
-          top: `${popTop}px`,
-          left: `${popLeft}px`,
-          transform: "none",
-          opacity: 1
+    const updatePositions = () => {
+      if (content.target && refs[content.target]?.current) {
+        const targetEl = refs[content.target].current;
+        const rect = targetEl.getBoundingClientRect();
+        setHighlightStyle({
+          width: `${rect.width + 12}px`,
+          height: `${rect.height + 12}px`,
+          top: `${rect.top - 6}px`,
+          left: `${rect.left - 6}px`
         });
-        const badgeSize = 70;
-        let badgeTop = popTop + popRect.height / 2 - badgeSize / 2;
-        let badgeLeft = popLeft - badgeSize - 10;
-        if (badgeLeft < 8) {
-          badgeLeft = popLeft + popRect.width + 10;
+        if (popoverRef.current) {
+          const popRect = popoverRef.current.getBoundingClientRect();
+          let popTop, popLeft;
+          switch (content.placement) {
+            case "bottom":
+              popTop = rect.bottom + 15;
+              popLeft = rect.left + rect.width / 2 - popRect.width / 2;
+              break;
+            case "top":
+              popTop = rect.top - popRect.height - 15;
+              popLeft = rect.left + rect.width / 2 - popRect.width / 2;
+              break;
+            case "top-right":
+              popTop = rect.top - popRect.height - 15;
+              popLeft = rect.right - popRect.width;
+              break;
+            default:
+              popTop = rect.bottom + 15;
+              popLeft = rect.left + rect.width / 2 - popRect.width / 2;
+          }
+          popTop = Math.max(8, Math.min(popTop, window.innerHeight - popRect.height - 8));
+          popLeft = Math.max(8, Math.min(popLeft, window.innerWidth - popRect.width - 8));
+          setPopoverStyle({ top: `${popTop}px`, left: `${popLeft}px`, opacity: 1 });
+          onBadgePositionChange({ top: popTop - 25, left: popLeft - 25 });
         }
-        setBadgeStyle({ top: `${badgeTop}px`, left: `${badgeLeft}px`, opacity: 1, width: `${badgeSize}px`, height: `${badgeSize}px` });
+      } else if (content.placement === "center") {
+        setHighlightStyle({ opacity: 0 });
+        if (popoverRef.current) {
+          const popRect = popoverRef.current.getBoundingClientRect();
+          const popTop = window.innerHeight / 2 - popRect.height / 2;
+          const popLeft = window.innerWidth / 2 - popRect.width / 2;
+          setPopoverStyle({
+            top: `${popTop}px`,
+            left: `${popLeft}px`,
+            transform: `none`,
+            // Use calculated top/left directly
+            opacity: 1
+          });
+          onBadgePositionChange({ top: popTop - 25, left: popLeft - 25 });
+        }
       }
-    }
-  }, [step, content, refs, setBadgeStyle]);
+    };
+    const timer = setTimeout(updatePositions, 0);
+    window.addEventListener("resize", updatePositions);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", updatePositions);
+    };
+  }, [step, content, refs, onBadgePositionChange]);
   const isLastStep = step === TUTORIAL_CONTENT.length - 1;
   const isWaitingStep = step === 4;
   const handleNext = async () => {
@@ -142,48 +134,48 @@ function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, sto
   return /* @__PURE__ */ jsxDEV(Fragment, { children: [
     /* @__PURE__ */ jsxDEV("div", { className: "tutorial-highlight", style: highlightStyle }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 168,
+      lineNumber: 157,
       columnNumber: 11
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "tutorial-popover", ref: popoverRef, style: popoverStyle, children: [
       /* @__PURE__ */ jsxDEV("p", { children: content.text }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 170,
+        lineNumber: 159,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV("div", { className: "tutorial-nav", children: [
         /* @__PURE__ */ jsxDEV("div", { className: "tutorial-dots", children: TUTORIAL_CONTENT.slice(1).map((_, i) => /* @__PURE__ */ jsxDEV("span", { className: i + 1 === step ? "active" : "" }, i, false, {
           fileName: "<stdin>",
-          lineNumber: 173,
+          lineNumber: 162,
           columnNumber: 62
         }, this)) }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 172,
+          lineNumber: 161,
           columnNumber: 17
         }, this),
         !isWaitingStep && /* @__PURE__ */ jsxDEV("button", { className: "btn primary", onClick: handleNext, disabled: isTrolling, children: isLastStep ? "Finish" : "Next" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 176,
+          lineNumber: 165,
           columnNumber: 21
         }, this),
         isWaitingStep && /* @__PURE__ */ jsxDEV("button", { className: "btn", disabled: true, children: "Waiting..." }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 178,
+          lineNumber: 167,
           columnNumber: 35
         }, this)
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 171,
+        lineNumber: 160,
         columnNumber: 13
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 169,
+      lineNumber: 158,
       columnNumber: 11
     }, this)
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 167,
+    lineNumber: 156,
     columnNumber: 9
   }, this);
 }
