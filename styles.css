@@ -94,4 +94,49 @@ body { margin: 0; background: var(--bg); color: var(--fg); font-family: "Noto Sa
 .tutorial-dots { display: flex; gap: 4px; }
 .tutorial-dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
 .tutorial-dots span.active { background: var(--accent); }
-/* ...existing styles... */
+
+.cover-overlay {
+  position: fixed;
+  inset: 0;
+  background: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 9999;
+  cursor: pointer;
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}
+
+.cover-folder {
+  width: 300px;
+  max-width: 80%;
+  position: relative;
+  z-index: 1;
+}
+
+.cover-badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 120px;
+}
+
+.cover-text {
+  margin-top: 24px;
+  font-size: 24px;
+  font-weight: 600;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  animation: pulse 2s infinite;
+  z-index: 2;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { opacity: 0.7; }
+}
