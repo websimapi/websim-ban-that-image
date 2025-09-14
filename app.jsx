@@ -453,10 +453,10 @@ function App() {
       lineNumber: 248,
       columnNumber: 7
     }, this),
-    /* @__PURE__ */ jsxDEV(Assistant, { voice: ttsVoice }, void 0, false, {
+    !showTutorial && /* @__PURE__ */ jsxDEV(Assistant, { voice: ttsVoice }, void 0, false, {
       fileName: "<stdin>",
       lineNumber: 249,
-      columnNumber: 7
+      columnNumber: 25
     }, this)
   ] }, void 0, true, {
     fileName: "<stdin>",
