@@ -9,8 +9,11 @@
         "id": { "type": "text", "description": "Primary key = user_id" },
         "score": { "type": "integer", "description": "Total Banjas earned" },
         "data": { "type": "jsonb", "description": "JSON blob containing ban history: { bans: [{ image_id, url, original_posted_at, banned_at, bounty }] }" }
+      },
+      "creator_metadata": {
+        "id": { "type": "text", "description": "Primary key = creator_user_id" },
+        "tts_cache": { "type": "jsonb", "description": "JSON blob containing TTS cache: { textId: audioUrl }" }
       }
     }
   }
 }
-
