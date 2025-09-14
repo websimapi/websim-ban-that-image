@@ -95,6 +95,17 @@ body { margin: 0; background: var(--bg); color: var(--fg); font-family: "Noto Sa
 .tutorial-dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
 .tutorial-dots span.active { background: var(--accent); }
 
+.agent-badge {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+}
+
+.agent-badge.bouncing {
+  animation: bounce 0.8s infinite;
+}
+
 .agent-badge-header {
   width: 50px;
   height: 50px;

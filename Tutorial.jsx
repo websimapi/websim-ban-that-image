@@ -16,7 +16,7 @@ const TROLL_TEXTS = [
   "Woah. Seriously\u2014this bit is crucial. If you skip it, you'll miss the one trick that separates agents from amateurs. Deep breath. Focus. Now, where was I...",
   "WOAH. Agent, stand down on that Next button. This briefing keeps the agency from imploding, kittens from crying, and your Banjas from evaporating. Three more seconds of patience. Now... where was I..."
 ];
-function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, stopSound, playing, creator }) {
+function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, stopSound, playing, creator, setBadgeStyle }) {
   const [highlightStyle, setHighlightStyle] = useState({ opacity: 0 });
   const [popoverStyle, setPopoverStyle] = useState({ opacity: 0 });
   const popoverRef = useRef(null);
@@ -26,17 +26,19 @@ function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, sto
   useEffect(() => {
     if (!content) {
       stopSound();
+      setBadgeStyle({ opacity: 0, pointerEvents: "none" });
       return;
     }
     playSound(content.text);
     return () => {
       stopSound();
     };
-  }, [step]);
+  }, [step, setBadgeStyle]);
   useEffect(() => {
     if (!content) {
       setHighlightStyle({ opacity: 0, pointerEvents: "none" });
       setPopoverStyle({ opacity: 0, pointerEvents: "none" });
+      setBadgeStyle({ opacity: 0, pointerEvents: "none" });
       return;
     }
     if (content.target && refs[content.target]?.current) {
@@ -71,20 +73,40 @@ function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, sto
         popTop = Math.max(8, Math.min(popTop, window.innerHeight - popRect.height - 8));
         popLeft = Math.max(8, Math.min(popLeft, window.innerWidth - popRect.width - 8));
         setPopoverStyle({ top: `${popTop}px`, left: `${popLeft}px`, opacity: 1 });
+        const badgeSize = 70;
+        let badgeTop = popTop + popRect.height / 2 - badgeSize / 2;
+        let badgeLeft;
+        if (popLeft > window.innerWidth / 2) {
+          badgeLeft = popLeft - badgeSize - 10;
+        } else {
+          badgeLeft = popLeft + popRect.width + 10;
+        }
+        badgeTop = Math.max(8, Math.min(badgeTop, window.innerHeight - badgeSize - 8));
+        badgeLeft = Math.max(8, Math.min(badgeLeft, window.innerWidth - badgeSize - 8));
+        setBadgeStyle({ top: `${badgeTop}px`, left: `${badgeLeft}px`, opacity: 1, width: `${badgeSize}px`, height: `${badgeSize}px` });
       }
     } else if (content.placement === "center") {
       setHighlightStyle({ opacity: 0 });
       if (popoverRef.current) {
         const popRect = popoverRef.current.getBoundingClientRect();
+        const popTop = window.innerHeight / 2 - popRect.height / 2;
+        const popLeft = window.innerWidth / 2 - popRect.width / 2;
         setPopoverStyle({
-          top: `50%`,
-          left: `50%`,
-          transform: `translate(-50%, -50%)`,
+          top: `${popTop}px`,
+          left: `${popLeft}px`,
+          transform: "none",
           opacity: 1
         });
+        const badgeSize = 70;
+        let badgeTop = popTop + popRect.height / 2 - badgeSize / 2;
+        let badgeLeft = popLeft - badgeSize - 10;
+        if (badgeLeft < 8) {
+          badgeLeft = popLeft + popRect.width + 10;
+        }
+        setBadgeStyle({ top: `${badgeTop}px`, left: `${badgeLeft}px`, opacity: 1, width: `${badgeSize}px`, height: `${badgeSize}px` });
       }
     }
-  }, [step, content, refs]);
+  }, [step, content, refs, setBadgeStyle]);
   const isLastStep = step === TUTORIAL_CONTENT.length - 1;
   const isWaitingStep = step === 4;
   const handleNext = async () => {
@@ -120,48 +142,48 @@ function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, sto
   return /* @__PURE__ */ jsxDEV(Fragment, { children: [
     /* @__PURE__ */ jsxDEV("div", { className: "tutorial-highlight", style: highlightStyle }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 139,
+      lineNumber: 168,
       columnNumber: 11
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "tutorial-popover", ref: popoverRef, style: popoverStyle, children: [
       /* @__PURE__ */ jsxDEV("p", { children: content.text }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 141,
+        lineNumber: 170,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV("div", { className: "tutorial-nav", children: [
         /* @__PURE__ */ jsxDEV("div", { className: "tutorial-dots", children: TUTORIAL_CONTENT.slice(1).map((_, i) => /* @__PURE__ */ jsxDEV("span", { className: i + 1 === step ? "active" : "" }, i, false, {
           fileName: "<stdin>",
-          lineNumber: 144,
+          lineNumber: 173,
           columnNumber: 62
         }, this)) }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 143,
+          lineNumber: 172,
           columnNumber: 17
         }, this),
         !isWaitingStep && /* @__PURE__ */ jsxDEV("button", { className: "btn primary", onClick: handleNext, disabled: isTrolling, children: isLastStep ? "Finish" : "Next" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 147,
+          lineNumber: 176,
           columnNumber: 21
         }, this),
         isWaitingStep && /* @__PURE__ */ jsxDEV("button", { className: "btn", disabled: true, children: "Waiting..." }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 149,
+          lineNumber: 178,
           columnNumber: 35
         }, this)
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 142,
+        lineNumber: 171,
         columnNumber: 13
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 140,
+      lineNumber: 169,
       columnNumber: 11
     }, this)
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 138,
+    lineNumber: 167,
     columnNumber: 9
   }, this);
 }
