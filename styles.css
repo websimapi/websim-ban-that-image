@@ -95,6 +95,22 @@ body { margin: 0; background: var(--bg); color: var(--fg); font-family: "Noto Sa
 .tutorial-dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
 .tutorial-dots span.active { background: var(--accent); }
 
+.agent-badge-header {
+  width: 70px;
+  height: 70px;
+  position: absolute;
+  top: 10px;
+  right: 24px;
+}
+.agent-badge-header.bouncing {
+  animation: bounce 0.8s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
 .cover-overlay {
   position: fixed;
   inset: 0;
@@ -109,29 +125,47 @@ body { margin: 0; background: var(--bg); color: var(--fg); font-family: "Noto Sa
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
   transition: opacity 0.5s ease-out;
-  opacity: 1;
 }
 
-.cover-overlay.animating-out {
+.cover-overlay.exiting {
   opacity: 0;
   pointer-events: none;
 }
 
-.cover-folder {
-  width: 600px;
-  max-width: 90%;
+.cover-content {
   position: relative;
-  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.agent-badge {
-  position: fixed;
-  z-index: 10000;
-  transition: all 1s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.5s ease-out; /* For smooth movement */
+.cover-folder {
+  width: 500px;
+  max-width: 80vw;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.5s ease-out, opacity 0.5s ease-out;
 }
 
-.agent-badge.bouncing {
-  animation: bounce 0.8s infinite;
+.cover-badge {
+  position: absolute;
+  width: 120px;
+  z-index: 0;
+  /* Start slightly inside the folder graphic */
+  transform: translateY(10%);
+  transition: transform 0.5s ease-out;
+}
+
+.cover-overlay.exiting .cover-folder {
+  transform: scale(0.8);
+  opacity: 0;
+}
+.cover-overlay.exiting .cover-badge {
+  animation: badge-exit 1s ease-in-out forwards;
+}
+.cover-overlay.exiting .cover-text {
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
 }
 
 .cover-text {
@@ -143,24 +177,27 @@ body { margin: 0; background: var(--bg); color: var(--fg); font-family: "Noto Sa
   letter-spacing: 0.1em;
   animation: pulse 2s infinite;
   z-index: 2;
-  transition: opacity 0.3s ease-out;
 }
 
-.cover-overlay.animating-out .cover-text {
-  opacity: 0;
+@keyframes badge-exit {
+  0% {
+    transform: translateY(10%) scale(1);
+    opacity: 1;
+  }
+  30% {
+    /* Emerge from folder */
+    transform: translateY(-80%) scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    /* Move to top right corner and shrink */
+    transform: translateY(-250%) translateX(250%) scale(0.5);
+    opacity: 0;
+  }
 }
 
 @keyframes pulse {
   0% { opacity: 0.7; }
   50% { opacity: 1; }
   100% { opacity: 0.7; }
-}
-
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0) scale(1);
-  }
-  50% {
-    transform: translateY(-8px) scale(1.05);
-  }
 }
