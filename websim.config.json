@@ -1,0 +1,16 @@
+{
+  "database": {
+    "schema": {
+      "gallery_image": {
+        "id": { "type": "uuid", "description": "Auto id" },
+        "url": { "type": "text", "description": "Public image URL" }
+      },
+      "ban_state": {
+        "id": { "type": "text", "description": "Primary key = user_id" },
+        "score": { "type": "integer", "description": "Total Banjas earned" },
+        "data": { "type": "jsonb", "description": "JSON blob containing ban history: { bans: [{ image_id, url, original_posted_at, banned_at, bounty }] }" }
+      }
+    }
+  }
+}
+
