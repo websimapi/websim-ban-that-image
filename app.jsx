@@ -95,9 +95,9 @@ function App() {
   const banState = states?.[0];
   const toast = useToast();
   const [tutorialStep, setTutorialStep] = useState(1);
-  const audioRef2 = useRef(null);
-  const [playing, setPlaying2] = useState(false);
-  const [paused, setPaused2] = useState(false);
+  const audioRef = useRef(null);
+  const [playing, setPlaying] = useState(false);
+  const [paused, setPaused] = useState(false);
   const lastAudioUrlRef = useRef(null);
   const lastPositionRef = useRef(0);
   const galleryRef = useRef(null);
@@ -166,72 +166,72 @@ function App() {
     }
   }
   async function playSound(text, onEndCallback) {
-    if (audioRef2.current) {
-      audioRef2.current.pause();
-      audioRef2.current.onended = null;
-      audioRef2.current.ontimeupdate = null;
-      audioRef2.current = null;
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.onended = null;
+      audioRef.current.ontimeupdate = null;
+      audioRef.current = null;
     }
-    setPlaying2(true);
-    setPaused2(false);
+    setPlaying(true);
+    setPaused(false);
     try {
       const res = await generateOrGetTTS(text, TTS_VOICE, creator);
       lastAudioUrlRef.current = res.url;
       lastPositionRef.current = 0;
       const audio = new Audio(res.url);
-      audioRef2.current = audio;
+      audioRef.current = audio;
       audio.ontimeupdate = () => {
         lastPositionRef.current = audio.currentTime || 0;
       };
       audio.onended = () => {
-        setPlaying2(false);
-        setPaused2(false);
-        audioRef2.current = null;
+        setPlaying(false);
+        setPaused(false);
+        audioRef.current = null;
         if (onEndCallback) onEndCallback();
       };
       await audio.play();
     } catch (e) {
       console.error("TTS failed", e);
-      setPlaying2(false);
+      setPlaying(false);
     }
   }
   function stopSound() {
-    if (audioRef2.current) {
-      audioRef2.current.pause();
-      audioRef2.current.onended = null;
-      audioRef2.current.ontimeupdate = null;
-      audioRef2.current = null;
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.onended = null;
+      audioRef.current.ontimeupdate = null;
+      audioRef.current = null;
     }
-    setPlaying2(false);
-    setPaused2(false);
+    setPlaying(false);
+    setPaused(false);
   }
   function pauseSound() {
-    if (audioRef2.current && playing && !paused) {
-      lastPositionRef.current = audioRef2.current.currentTime || 0;
-      audioRef2.current.pause();
-      setPaused2(true);
+    if (audioRef.current && playing && !paused) {
+      lastPositionRef.current = audioRef.current.currentTime || 0;
+      audioRef.current.pause();
+      setPaused(true);
     }
   }
   function resumeSound() {
-    if (audioRef2.current && playing && paused) {
-      audioRef2.current.play();
-      setPaused2(false);
+    if (audioRef.current && playing && paused) {
+      audioRef.current.play();
+      setPaused(false);
       return;
     }
     const url = lastAudioUrlRef.current;
     const t = lastPositionRef.current || 0;
     if (!url) return;
     const audio = new Audio(url);
-    audioRef2.current = audio;
-    setPlaying2(true);
-    setPaused2(false);
+    audioRef.current = audio;
+    setPlaying(true);
+    setPaused(false);
     audio.ontimeupdate = () => {
       lastPositionRef.current = audio.currentTime || 0;
     };
     audio.onended = () => {
-      setPlaying2(false);
-      setPaused2(false);
-      audioRef2.current = null;
+      setPlaying(false);
+      setPaused(false);
+      audioRef.current = null;
     };
     const startAt = Math.max(0, t - 0.05);
     const startPlayback = () => {
@@ -527,14 +527,7 @@ function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, sto
     }
     playSound(content.text);
     return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.onended = null;
-        audioRef.current.ontimeupdate = null;
-        audioRef.current = null;
-      }
-      setPlaying(false);
-      setPaused(false);
+      stopSound();
     };
   }, [step]);
   useEffect(() => {
@@ -621,55 +614,55 @@ function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, sto
   return /* @__PURE__ */ jsxDEV(Fragment, { children: [
     /* @__PURE__ */ jsxDEV("div", { className: "tutorial-highlight", style: highlightStyle }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 501,
+      lineNumber: 494,
       columnNumber: 11
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "tutorial-popover", ref: popoverRef, style: popoverStyle, children: [
       /* @__PURE__ */ jsxDEV("p", { children: content.text }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 503,
+        lineNumber: 496,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV("div", { className: "tutorial-nav", children: [
         /* @__PURE__ */ jsxDEV("div", { className: "tutorial-dots", children: TUTORIAL_CONTENT.slice(1).map((_, i) => /* @__PURE__ */ jsxDEV("span", { className: i + 1 === step ? "active" : "" }, i, false, {
           fileName: "<stdin>",
-          lineNumber: 506,
+          lineNumber: 499,
           columnNumber: 62
         }, this)) }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 505,
+          lineNumber: 498,
           columnNumber: 17
         }, this),
         !isWaitingStep && /* @__PURE__ */ jsxDEV("button", { className: "btn primary", onClick: handleNext, disabled: isTrolling, children: isLastStep ? "Finish" : "Next" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 509,
+          lineNumber: 502,
           columnNumber: 21
         }, this),
         isWaitingStep && /* @__PURE__ */ jsxDEV("button", { className: "btn", disabled: true, children: "Waiting..." }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 511,
+          lineNumber: 504,
           columnNumber: 35
         }, this)
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 504,
+        lineNumber: 497,
         columnNumber: 13
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 502,
+      lineNumber: 495,
       columnNumber: 11
     }, this)
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 500,
+    lineNumber: 493,
     columnNumber: 9
   }, this);
 }
 function Toast({ msg, show }) {
   return /* @__PURE__ */ jsxDEV("div", { className: `toast ${show ? "show" : ""}`, children: msg }, void 0, false, {
     fileName: "<stdin>",
-    lineNumber: 519,
+    lineNumber: 512,
     columnNumber: 10
   }, this);
 }
@@ -683,7 +676,7 @@ function Leaderboard() {
   return /* @__PURE__ */ jsxDEV("div", { children: rows.map((row) => /* @__PURE__ */ jsxDEV("div", { className: "row", children: [
     /* @__PURE__ */ jsxDEV("img", { className: "avatar", src: `https://images.websim.com/avatar/${row.username}`, alt: "avatar" }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 533,
+      lineNumber: 526,
       columnNumber: 11
     }, this),
     /* @__PURE__ */ jsxDEV("strong", { children: [
@@ -691,7 +684,7 @@ function Leaderboard() {
       row.username
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 534,
+      lineNumber: 527,
       columnNumber: 11
     }, this),
     /* @__PURE__ */ jsxDEV("span", { className: "score", children: [
@@ -699,16 +692,16 @@ function Leaderboard() {
       " Banjas"
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 535,
+      lineNumber: 528,
       columnNumber: 11
     }, this)
   ] }, row.id, true, {
     fileName: "<stdin>",
-    lineNumber: 532,
+    lineNumber: 525,
     columnNumber: 9
   }, this)) }, void 0, false, {
     fileName: "<stdin>",
-    lineNumber: 530,
+    lineNumber: 523,
     columnNumber: 5
   }, this);
 }
@@ -751,23 +744,23 @@ function Assistant() {
   return /* @__PURE__ */ jsxDEV("div", { className: "assistant", children: [
     /* @__PURE__ */ jsxDEV("header", { children: "Agent Ban" }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 584,
+      lineNumber: 577,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "chatlog", children: [
       log.map((m, i) => /* @__PURE__ */ jsxDEV("div", { className: `msg ${m.role === "user" ? "user" : "ai"}`, children: m.content }, i, false, {
         fileName: "<stdin>",
-        lineNumber: 587,
+        lineNumber: 580,
         columnNumber: 11
       }, this)),
       log.length === 0 && /* @__PURE__ */ jsxDEV("div", { className: "msg ai", children: `Say "Start banning" and I'll guide you.` }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 590,
+        lineNumber: 583,
         columnNumber: 11
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 585,
+      lineNumber: 578,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "inputrow", children: [
@@ -783,30 +776,30 @@ function Assistant() {
         false,
         {
           fileName: "<stdin>",
-          lineNumber: 594,
+          lineNumber: 587,
           columnNumber: 9
         },
         this
       ),
       /* @__PURE__ */ jsxDEV("button", { className: "btn", onClick: send, disabled: busy, children: busy ? "\u2026" : "Send" }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 600,
+        lineNumber: 593,
         columnNumber: 9
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 593,
+      lineNumber: 586,
       columnNumber: 7
     }, this)
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 583,
+    lineNumber: 576,
     columnNumber: 5
   }, this);
 }
 const root = createRoot(document.getElementById("root"));
 root.render(/* @__PURE__ */ jsxDEV(App, {}, void 0, false, {
   fileName: "<stdin>",
-  lineNumber: 607,
+  lineNumber: 600,
   columnNumber: 13
 }));
