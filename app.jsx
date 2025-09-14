@@ -95,10 +95,10 @@ function App() {
   const banState = states?.[0];
   const toast = useToast();
   const [tutorialStep, setTutorialStep] = useState(1);
-  const audioRef2 = useRef(null);
+  const audioRef = useRef(null);
   const [playing, setPlaying] = useState(false);
   const [paused, setPaused] = useState(false);
-  const [savedPosition2, setSavedPosition2] = useState(0);
+  const [savedPosition, setSavedPosition] = useState(0);
   const galleryRef = useRef(null);
   const uploadRef = useRef(null);
   const tutorialCardRef = useRef(null);
@@ -165,21 +165,21 @@ function App() {
     }
   }
   async function playSound(text, onEndCallback) {
-    if (audioRef2.current) {
-      audioRef2.current.pause();
-      audioRef2.current.onended = null;
-      audioRef2.current = null;
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.onended = null;
+      audioRef.current = null;
     }
     setPlaying(true);
     setPaused(false);
     try {
       const res = await generateOrGetTTS(text, TTS_VOICE, creator);
       const audio = new Audio(res.url);
-      audioRef2.current = audio;
+      audioRef.current = audio;
       audio.onended = () => {
         setPlaying(false);
         setPaused(false);
-        audioRef2.current = null;
+        audioRef.current = null;
         if (onEndCallback) onEndCallback();
       };
       await audio.play();
@@ -189,25 +189,25 @@ function App() {
     }
   }
   function stopSound() {
-    if (audioRef2.current) {
-      audioRef2.current.pause();
-      audioRef2.current.onended = null;
-      audioRef2.current = null;
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.onended = null;
+      audioRef.current = null;
     }
     setPlaying(false);
     setPaused(false);
   }
   function pauseSound() {
-    if (audioRef2.current && playing && !paused) {
-      setSavedPosition2(audioRef2.current.currentTime);
-      audioRef2.current.pause();
+    if (audioRef.current && playing && !paused) {
+      setSavedPosition(audioRef.current.currentTime);
+      audioRef.current.pause();
       setPaused(true);
     }
   }
   function resumeSound() {
-    if (audioRef2.current && playing && paused) {
-      audioRef2.current.currentTime = savedPosition2;
-      audioRef2.current.play();
+    if (audioRef.current && playing && paused) {
+      audioRef.current.currentTime = savedPosition;
+      audioRef.current.play();
       setPaused(false);
     }
   }
@@ -556,10 +556,7 @@ function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, sto
     if (playing && !trolledSteps.has(step)) {
       setTrolledSteps((prev) => new Set(prev.add(step)));
       setIsTrolling(true);
-      if (audioRef.current) {
-        setSavedPosition(audioRef.current.currentTime);
-        audioRef.current.pause();
-      }
+      pauseSound();
       try {
         const res = await generateOrGetTTS(TROLL_TEXT, TTS_VOICE, creator);
         const trollAudio = new Audio(res.url);
@@ -570,10 +567,7 @@ function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, sto
       } catch (e) {
         console.error("Troll TTS failed", e);
       }
-      if (audioRef.current) {
-        audioRef.current.currentTime = savedPosition;
-        audioRef.current.play();
-      }
+      resumeSound();
       setIsTrolling(false);
       return;
     }
@@ -587,55 +581,55 @@ function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, sto
   return /* @__PURE__ */ jsxDEV(Fragment, { children: [
     /* @__PURE__ */ jsxDEV("div", { className: "tutorial-highlight", style: highlightStyle }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 477,
+      lineNumber: 471,
       columnNumber: 11
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "tutorial-popover", ref: popoverRef, style: popoverStyle, children: [
       /* @__PURE__ */ jsxDEV("p", { children: content.text }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 479,
+        lineNumber: 473,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV("div", { className: "tutorial-nav", children: [
         /* @__PURE__ */ jsxDEV("div", { className: "tutorial-dots", children: TUTORIAL_CONTENT.slice(1).map((_, i) => /* @__PURE__ */ jsxDEV("span", { className: i + 1 === step ? "active" : "" }, i, false, {
           fileName: "<stdin>",
-          lineNumber: 482,
+          lineNumber: 476,
           columnNumber: 62
         }, this)) }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 481,
+          lineNumber: 475,
           columnNumber: 17
         }, this),
         !isWaitingStep && /* @__PURE__ */ jsxDEV("button", { className: "btn primary", onClick: handleNext, disabled: isTrolling, children: isLastStep ? "Finish" : "Next" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 485,
+          lineNumber: 479,
           columnNumber: 21
         }, this),
         isWaitingStep && /* @__PURE__ */ jsxDEV("button", { className: "btn", disabled: true, children: "Waiting..." }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 487,
+          lineNumber: 481,
           columnNumber: 35
         }, this)
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 480,
+        lineNumber: 474,
         columnNumber: 13
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 478,
+      lineNumber: 472,
       columnNumber: 11
     }, this)
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 476,
+    lineNumber: 470,
     columnNumber: 9
   }, this);
 }
 function Toast({ msg, show }) {
   return /* @__PURE__ */ jsxDEV("div", { className: `toast ${show ? "show" : ""}`, children: msg }, void 0, false, {
     fileName: "<stdin>",
-    lineNumber: 495,
+    lineNumber: 489,
     columnNumber: 10
   }, this);
 }
@@ -649,7 +643,7 @@ function Leaderboard() {
   return /* @__PURE__ */ jsxDEV("div", { children: rows.map((row) => /* @__PURE__ */ jsxDEV("div", { className: "row", children: [
     /* @__PURE__ */ jsxDEV("img", { className: "avatar", src: `https://images.websim.com/avatar/${row.username}`, alt: "avatar" }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 509,
+      lineNumber: 503,
       columnNumber: 11
     }, this),
     /* @__PURE__ */ jsxDEV("strong", { children: [
@@ -657,7 +651,7 @@ function Leaderboard() {
       row.username
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 510,
+      lineNumber: 504,
       columnNumber: 11
     }, this),
     /* @__PURE__ */ jsxDEV("span", { className: "score", children: [
@@ -665,16 +659,16 @@ function Leaderboard() {
       " Banjas"
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 511,
+      lineNumber: 505,
       columnNumber: 11
     }, this)
   ] }, row.id, true, {
     fileName: "<stdin>",
-    lineNumber: 508,
+    lineNumber: 502,
     columnNumber: 9
   }, this)) }, void 0, false, {
     fileName: "<stdin>",
-    lineNumber: 506,
+    lineNumber: 500,
     columnNumber: 5
   }, this);
 }
@@ -717,23 +711,23 @@ function Assistant() {
   return /* @__PURE__ */ jsxDEV("div", { className: "assistant", children: [
     /* @__PURE__ */ jsxDEV("header", { children: "Agent Ban" }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 560,
+      lineNumber: 554,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "chatlog", children: [
       log.map((m, i) => /* @__PURE__ */ jsxDEV("div", { className: `msg ${m.role === "user" ? "user" : "ai"}`, children: m.content }, i, false, {
         fileName: "<stdin>",
-        lineNumber: 563,
+        lineNumber: 557,
         columnNumber: 11
       }, this)),
       log.length === 0 && /* @__PURE__ */ jsxDEV("div", { className: "msg ai", children: `Say "Start banning" and I'll guide you.` }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 566,
+        lineNumber: 560,
         columnNumber: 11
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 561,
+      lineNumber: 555,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "inputrow", children: [
@@ -749,30 +743,30 @@ function Assistant() {
         false,
         {
           fileName: "<stdin>",
-          lineNumber: 570,
+          lineNumber: 564,
           columnNumber: 9
         },
         this
       ),
       /* @__PURE__ */ jsxDEV("button", { className: "btn", onClick: send, disabled: busy, children: busy ? "\u2026" : "Send" }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 576,
+        lineNumber: 570,
         columnNumber: 9
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 569,
+      lineNumber: 563,
       columnNumber: 7
     }, this)
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 559,
+    lineNumber: 553,
     columnNumber: 5
   }, this);
 }
 const root = createRoot(document.getElementById("root"));
 root.render(/* @__PURE__ */ jsxDEV(App, {}, void 0, false, {
   fileName: "<stdin>",
-  lineNumber: 583,
+  lineNumber: 577,
   columnNumber: 13
 }));
