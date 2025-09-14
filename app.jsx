@@ -473,18 +473,15 @@ function Toast({ msg, show }) {
 }
 function Leaderboard() {
   const { data: rows = [] } = useQuery(
-    room.query(`with s as (
-      select bs.id, bs.score from public.${BANSTATE} bs
-    )
-    select u.id, u.username, s.score
-    from s
-    join public.user u on (u.id = s.id)
-    order by s.score desc nulls last`)
+    room.query(`select u.id, u.username, bs.score
+      from public.${BANSTATE} bs
+      join public.user u on (u.id = bs.id)
+      order by bs.score desc nulls last`)
   );
   return /* @__PURE__ */ jsxDEV("div", { children: rows.map((row) => /* @__PURE__ */ jsxDEV("div", { className: "row", children: [
     /* @__PURE__ */ jsxDEV("img", { className: "avatar", src: `https://images.websim.com/avatar/${row.username}`, alt: "avatar" }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 272,
+      lineNumber: 269,
       columnNumber: 11
     }, this),
     /* @__PURE__ */ jsxDEV("strong", { children: [
@@ -492,7 +489,7 @@ function Leaderboard() {
       row.username
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 273,
+      lineNumber: 270,
       columnNumber: 11
     }, this),
     /* @__PURE__ */ jsxDEV("span", { className: "score", children: [
@@ -500,16 +497,16 @@ function Leaderboard() {
       " Banjas"
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 274,
+      lineNumber: 271,
       columnNumber: 11
     }, this)
   ] }, row.id, true, {
     fileName: "<stdin>",
-    lineNumber: 271,
+    lineNumber: 268,
     columnNumber: 9
   }, this)) }, void 0, false, {
     fileName: "<stdin>",
-    lineNumber: 269,
+    lineNumber: 266,
     columnNumber: 5
   }, this);
 }
@@ -550,23 +547,23 @@ function Assistant({ voice }) {
   return /* @__PURE__ */ jsxDEV("div", { className: "assistant", children: [
     /* @__PURE__ */ jsxDEV("header", { children: "Agent Ban" }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 319,
+      lineNumber: 316,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "chatlog", children: [
       log.map((m, i) => /* @__PURE__ */ jsxDEV("div", { className: `msg ${m.role === "user" ? "user" : "ai"}`, children: m.content }, i, false, {
         fileName: "<stdin>",
-        lineNumber: 322,
+        lineNumber: 319,
         columnNumber: 11
       }, this)),
       log.length === 0 && /* @__PURE__ */ jsxDEV("div", { className: "msg ai", children: "Say \u201CStart banning\u201D and I\u2019ll guide you." }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 325,
+        lineNumber: 322,
         columnNumber: 11
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 320,
+      lineNumber: 317,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "inputrow", children: [
@@ -582,30 +579,30 @@ function Assistant({ voice }) {
         false,
         {
           fileName: "<stdin>",
-          lineNumber: 329,
+          lineNumber: 326,
           columnNumber: 9
         },
         this
       ),
       /* @__PURE__ */ jsxDEV("button", { className: "btn", onClick: send, disabled: busy, children: busy ? "\u2026" : "Send" }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 335,
+        lineNumber: 332,
         columnNumber: 9
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 328,
+      lineNumber: 325,
       columnNumber: 7
     }, this)
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 318,
+    lineNumber: 315,
     columnNumber: 5
   }, this);
 }
 const root = createRoot(document.getElementById("root"));
 root.render(/* @__PURE__ */ jsxDEV(App, {}, void 0, false, {
   fileName: "<stdin>",
-  lineNumber: 342,
+  lineNumber: 339,
   columnNumber: 13
 }));
