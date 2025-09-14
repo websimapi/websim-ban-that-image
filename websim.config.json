@@ -14,6 +14,7 @@
         "id": { "type": "text", "description": "Primary key = creator_user_id" },
         "tts_cache": { "type": "jsonb", "description": "JSON blob containing TTS cache: { textId: audioUrl }" }
       }
-    }
+    },
+    "instructions": "To get a user's score, you can query the `ban_state` table. The `id` column is the user's ID. You'll need to join with the `user` table to get their username."
   }
 }
