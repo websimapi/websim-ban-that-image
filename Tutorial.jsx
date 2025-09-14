@@ -20,9 +20,27 @@ function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, sto
   const [highlightStyle, setHighlightStyle] = useState({ opacity: 0 });
   const [popoverStyle, setPopoverStyle] = useState({ opacity: 0 });
   const popoverRef = useRef(null);
+  const backgroundAudioRef = useRef(null);
+  const uiClickSoundRef = useRef(null);
+  const trollAlertSoundRef = useRef(null);
   const content = TUTORIAL_CONTENT[step];
   const trollCountsRef = useRef({});
   const [isTrolling, setIsTrolling] = useState(false);
+  useEffect(() => {
+    backgroundAudioRef.current = new Audio("background_ambience.mp3");
+    backgroundAudioRef.current.loop = true;
+    backgroundAudioRef.current.volume = 0.3;
+    backgroundAudioRef.current.play().catch((e) => console.error("BG Audio autoplay failed; user may need to interact first.", e));
+    uiClickSoundRef.current = new Audio("ui_click.mp3");
+    trollAlertSoundRef.current = new Audio("troll_alert.mp3");
+    trollAlertSoundRef.current.volume = 0.5;
+    return () => {
+      if (backgroundAudioRef.current) {
+        backgroundAudioRef.current.pause();
+        backgroundAudioRef.current = null;
+      }
+    };
+  }, []);
   useEffect(() => {
     if (!content) {
       stopSound();
@@ -94,6 +112,9 @@ function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, sto
       const count = prev + 1;
       trollCountsRef.current[step] = count;
       setIsTrolling(true);
+      if (trollAlertSoundRef.current) {
+        trollAlertSoundRef.current.play();
+      }
       pauseSound();
       try {
         const text = TROLL_TEXTS[Math.min(count - 1, TROLL_TEXTS.length - 1)];
@@ -110,6 +131,9 @@ function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, sto
       setIsTrolling(false);
       return;
     }
+    if (uiClickSoundRef.current) {
+      uiClickSoundRef.current.play();
+    }
     if (isLastStep) {
       setStep(0);
     } else {
@@ -120,48 +144,48 @@ function Tutorial({ step, setStep, refs, playSound, pauseSound, resumeSound, sto
   return /* @__PURE__ */ jsxDEV(Fragment, { children: [
     /* @__PURE__ */ jsxDEV("div", { className: "tutorial-highlight", style: highlightStyle }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 139,
+      lineNumber: 170,
       columnNumber: 11
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "tutorial-popover", ref: popoverRef, style: popoverStyle, children: [
       /* @__PURE__ */ jsxDEV("p", { children: content.text }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 141,
+        lineNumber: 172,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV("div", { className: "tutorial-nav", children: [
         /* @__PURE__ */ jsxDEV("div", { className: "tutorial-dots", children: TUTORIAL_CONTENT.slice(1).map((_, i) => /* @__PURE__ */ jsxDEV("span", { className: i + 1 === step ? "active" : "" }, i, false, {
           fileName: "<stdin>",
-          lineNumber: 144,
+          lineNumber: 175,
           columnNumber: 62
         }, this)) }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 143,
+          lineNumber: 174,
           columnNumber: 17
         }, this),
         !isWaitingStep && /* @__PURE__ */ jsxDEV("button", { className: "btn primary", onClick: handleNext, disabled: isTrolling, children: isLastStep ? "Finish" : "Next" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 147,
+          lineNumber: 178,
           columnNumber: 21
         }, this),
         isWaitingStep && /* @__PURE__ */ jsxDEV("button", { className: "btn", disabled: true, children: "Waiting..." }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 149,
+          lineNumber: 180,
           columnNumber: 35
         }, this)
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 142,
+        lineNumber: 173,
         columnNumber: 13
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 140,
+      lineNumber: 171,
       columnNumber: 11
     }, this)
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 138,
+    lineNumber: 169,
     columnNumber: 9
   }, this);
 }
