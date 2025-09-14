@@ -96,8 +96,8 @@ body { margin: 0; background: var(--bg); color: var(--fg); font-family: "Noto Sa
 .tutorial-dots span.active { background: var(--accent); }
 
 .agent-badge-header {
-  width: 70px;
-  height: 70px;
+  width: 50px;
+  height: 50px;
   position: absolute;
   top: 10px;
   right: 24px;

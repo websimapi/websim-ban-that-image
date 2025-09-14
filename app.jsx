@@ -249,15 +249,15 @@ function App() {
         columnNumber: 9
       }, this),
       /* @__PURE__ */ jsxDEV("div", { className: "bar", children: [
-        coverExited && /* @__PURE__ */ jsxDEV(AgentBadge, { bouncing: playing }, void 0, false, {
-          fileName: "<stdin>",
-          lineNumber: 229,
-          columnNumber: 27
-        }, this),
         /* @__PURE__ */ jsxDEV("button", { className: "btn", onClick: () => setTutorialStep(1), children: "Restart Tutorial" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 230,
+          lineNumber: 229,
           columnNumber: 11
+        }, this),
+        coverExited && /* @__PURE__ */ jsxDEV(AgentBadge, { bouncing: playing }, void 0, false, {
+          fileName: "<stdin>",
+          lineNumber: 230,
+          columnNumber: 27
         }, this)
       ] }, void 0, true, {
         fileName: "<stdin>",
