@@ -74,9 +74,9 @@ body { margin: 0; background: var(--bg); color: var(--fg); font-family: "Noto Sa
   left: 0;
   width: 100%;
   height: 100%;
-  overflow: visible;
+  overflow: hidden;
   pointer-events: none;
-  z-index: 10;
+  z-index: 50;
 }
 
 .ban-hammer {
@@ -85,7 +85,8 @@ body { margin: 0; background: var(--bg); color: var(--fg); font-family: "Noto Sa
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  animation: hammer-down 1.5s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards;
+  animation: hammer-down 2s ease-out forwards;
+  z-index: 51;
 }
 
 .banned-stamp {
@@ -93,37 +94,38 @@ body { margin: 0; background: var(--bg); color: var(--fg); font-family: "Noto Sa
   width: 80%;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) rotate(-15deg) scale(2);
+  transform: translate(-50%, -50%) rotate(45deg) scale(2);
   opacity: 0;
-  animation: stamp-appear 0.5s cubic-bezier(.17,.67,.83,.67) 1.25s forwards;
+  animation: stamp-appear 0.5s cubic-bezier(.17,.67,.83,.67) 1.5s forwards;
+  z-index: 52;
 }
 
 @keyframes hammer-down {
   0% {
-    transform: translate(-50%, -500%) rotate(45deg);
+    transform: translate(-50%, -800%) rotate(45deg);
     opacity: 1;
   }
   70% {
-    transform: translate(-50%, -40%) rotate(-10deg);
+    transform: translate(-50%, -50%) rotate(-10deg);
     opacity: 1;
   }
   85% {
-    transform: translate(-45%, -35%) rotate(-15deg) scale(1.1);
+    transform: translate(-50%, -45%) rotate(-15deg);
     opacity: 1;
   }
   100% {
-    transform: translate(-45%, -35%) rotate(-15deg) scale(1.1);
+    transform: translate(-50%, -40%) rotate(-15deg);
     opacity: 0;
   }
 }
 
 @keyframes stamp-appear {
   0% {
-    transform: translate(-50%, -50%) rotate(-15deg) scale(2.5);
+    transform: translate(-50%, -50%) rotate(45deg) scale(2.5);
     opacity: 0;
   }
   100% {
-    transform: translate(-50%, -50%) rotate(-15deg) scale(1);
+    transform: translate(-50%, -50%) rotate(45deg) scale(1);
     opacity: 1;
   }
 }
