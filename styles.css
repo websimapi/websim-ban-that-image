@@ -108,20 +108,30 @@ body { margin: 0; background: var(--bg); color: var(--fg); font-family: "Noto Sa
   -webkit-user-select: none; /* Safari */
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
+  transition: opacity 0.5s ease-out;
+  opacity: 1;
+}
+
+.cover-overlay.animating-out {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .cover-folder {
-  width: 300px;
-  max-width: 80%;
+  width: 600px;
+  max-width: 90%;
   position: relative;
   z-index: 1;
 }
 
-.cover-badge {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 120px;
+.agent-badge {
+  position: fixed;
+  z-index: 10000;
+  transition: all 1s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* For smooth movement */
+}
+
+.agent-badge.bouncing {
+  animation: bounce 0.8s infinite;
 }
 
 .cover-text {
@@ -133,10 +143,24 @@ body { margin: 0; background: var(--bg); color: var(--fg); font-family: "Noto Sa
   letter-spacing: 0.1em;
   animation: pulse 2s infinite;
   z-index: 2;
+  transition: opacity 0.3s ease-out;
+}
+
+.cover-overlay.animating-out .cover-text {
+  opacity: 0;
 }
 
 @keyframes pulse {
   0% { opacity: 0.7; }
   50% { opacity: 1; }
   100% { opacity: 0.7; }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-8px) scale(1.05);
+  }
 }
