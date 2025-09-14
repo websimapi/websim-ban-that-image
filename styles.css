@@ -121,13 +121,13 @@ body { margin: 0; background: var(--bg); color: var(--fg); font-family: "Noto Sa
   width: 600px;
   max-width: 90%;
   position: relative;
-  z-index: 1;
+  z-index: 9999;
 }
 
 .agent-badge {
   position: fixed;
   z-index: 10000;
-  transition: all 1s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* For smooth movement */
+  transition: all 1s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.5s ease-out; /* For smooth movement */
 }
 
 .agent-badge.bouncing {
