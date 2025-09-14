@@ -29,7 +29,7 @@ function AgentBadge({ bouncing, style, isTutorialBadge = false, isHeaderBadge = 
         style: tutorialStyle,
         alt: "Agent Ban Badge",
         initial: { opacity: 0, scale: 0.5 },
-        animate: { opacity: style?.opacity ?? 0, scale: 1 },
+        animate: { opacity: style?.opacity ?? 0, scale: 1, visibility: style?.opacity > 0 ? "visible" : "hidden" },
         transition: { type: "spring", stiffness: 260, damping: 20 }
       },
       void 0,
